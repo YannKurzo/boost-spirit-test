@@ -259,9 +259,8 @@ boost_spirit_test_SOURCES = main.cc
 AM_CPPFLAGS = -I$(srcdir)/include -std=gnu++11 -pedantic -Wall -Wextra \
 	-Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 \
 	-Winit-self -Wmissing-declarations -Wmissing-include-dirs \
-	-Wnoexcept -Woverloaded-virtual -Wredundant-decls -Wsign-promo \
-	-Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default \
-	-Wno-unused
+	-Wnoexcept -Wredundant-decls -Wsign-promo \
+	-Wstrict-null-sentinel -Wstrict-overflow=5 -Wno-unused
 
 # boost
 AM_CXXFLAGS = $(BOOST_CPPFLAGS)
@@ -573,7 +572,7 @@ uninstall-am: uninstall-binPROGRAMS
 	uninstall-binPROGRAMS
 
 #AM_CPPFLAGS += -Werror
-#-Wsign-conversion -Wold-style-cast -Wundef -Wzero-as-null-pointer-constant -Wctor-dtor-privacy -Wlogical-op -Wshadow -Wuseless-cast
+#-Wsign-conversion -Wold-style-cast -Wundef -Wzero-as-null-pointer-constant -Wctor-dtor-privacy -Wlogical-op -Wshadow -Wuseless-cast -Wswitch-default -Woverloaded-virtual
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

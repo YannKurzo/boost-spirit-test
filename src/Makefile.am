@@ -17,8 +17,8 @@ AM_CXXFLAGS = $(BOOST_CPPFLAGS)
 # Warning and errors
 AM_CPPFLAGS += -pedantic -Wall -Wextra -Wcast-align -Wcast-qual
 AM_CPPFLAGS += -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-declarations
-AM_CPPFLAGS += -Wmissing-include-dirs -Wnoexcept -Woverloaded-virtual
+AM_CPPFLAGS += -Wmissing-include-dirs -Wnoexcept
 AM_CPPFLAGS += -Wredundant-decls -Wsign-promo -Wstrict-null-sentinel
-AM_CPPFLAGS += -Wstrict-overflow=5 -Wswitch-default -Wno-unused
+AM_CPPFLAGS += -Wstrict-overflow=5 -Wno-unused
 #AM_CPPFLAGS += -Werror
-#-Wsign-conversion -Wold-style-cast -Wundef -Wzero-as-null-pointer-constant -Wctor-dtor-privacy -Wlogical-op -Wshadow -Wuseless-cast
+#-Wsign-conversion -Wold-style-cast -Wundef -Wzero-as-null-pointer-constant -Wctor-dtor-privacy -Wlogical-op -Wshadow -Wuseless-cast -Wswitch-default -Woverloaded-virtual
