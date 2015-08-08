@@ -78,7 +78,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = boost_autoconf$(EXEEXT)
+bin_PROGRAMS = boost_spirit_test$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp
@@ -93,9 +93,9 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_boost_autoconf_OBJECTS = main.$(OBJEXT)
-boost_autoconf_OBJECTS = $(am_boost_autoconf_OBJECTS)
-boost_autoconf_LDADD = $(LDADD)
+am_boost_spirit_test_OBJECTS = main.$(OBJEXT)
+boost_spirit_test_OBJECTS = $(am_boost_spirit_test_OBJECTS)
+boost_spirit_test_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -125,8 +125,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(boost_autoconf_SOURCES)
-DIST_SOURCES = $(boost_autoconf_SOURCES)
+SOURCES = $(boost_spirit_test_SOURCES)
+DIST_SOURCES = $(boost_spirit_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -248,7 +248,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 # Source files
-boost_autoconf_SOURCES = main.cc
+boost_spirit_test_SOURCES = main.cc
 
 # Include files
 
@@ -258,11 +258,10 @@ boost_autoconf_SOURCES = main.cc
 # Warning and errors
 AM_CPPFLAGS = -I$(srcdir)/include -std=gnu++11 -pedantic -Wall -Wextra \
 	-Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 \
-	-Winit-self -Wlogical-op -Wmissing-declarations \
-	-Wmissing-include-dirs -Wnoexcept -Woverloaded-virtual \
-	-Wredundant-decls -Wshadow -Wsign-promo -Wstrict-null-sentinel \
-	-Wstrict-overflow=5 -Wswitch-default -Werror -Wno-unused \
-	-Wuseless-cast
+	-Winit-self -Wmissing-declarations -Wmissing-include-dirs \
+	-Wnoexcept -Woverloaded-virtual -Wredundant-decls -Wsign-promo \
+	-Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default \
+	-Wno-unused
 
 # boost
 AM_CXXFLAGS = $(BOOST_CPPFLAGS)
@@ -343,9 +342,9 @@ uninstall-binPROGRAMS:
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
-boost_autoconf$(EXEEXT): $(boost_autoconf_OBJECTS) $(boost_autoconf_DEPENDENCIES) $(EXTRA_boost_autoconf_DEPENDENCIES) 
-	@rm -f boost_autoconf$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(boost_autoconf_OBJECTS) $(boost_autoconf_LDADD) $(LIBS)
+boost_spirit_test$(EXEEXT): $(boost_spirit_test_OBJECTS) $(boost_spirit_test_DEPENDENCIES) $(EXTRA_boost_spirit_test_DEPENDENCIES) 
+	@rm -f boost_spirit_test$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(boost_spirit_test_OBJECTS) $(boost_spirit_test_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -573,7 +572,8 @@ uninstall-am: uninstall-binPROGRAMS
 	ps ps-am tags tags-am uninstall uninstall-am \
 	uninstall-binPROGRAMS
 
-#-Wsign-conversion -Wold-style-cast -Wundef -Wzero-as-null-pointer-constant -Wctor-dtor-privacy
+#AM_CPPFLAGS += -Werror
+#-Wsign-conversion -Wold-style-cast -Wundef -Wzero-as-null-pointer-constant -Wctor-dtor-privacy -Wlogical-op -Wshadow -Wuseless-cast
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
