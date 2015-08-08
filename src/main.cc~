@@ -5,7 +5,7 @@
 /// @date   August 8, 2015, 9:32 PM
 /// @copyright Copyright 2015 Yann Kurzo. All rights reserved.
 ///         This project is released under the GNU Public License.
-/// @brief  Simple recursive parser to check a string
+/// @brief  Start a new application
 //  ==========================================================================
 
 #include <boost/spirit/include/qi.hpp>
