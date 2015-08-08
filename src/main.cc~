@@ -19,32 +19,28 @@
 #include <iostream>
 #include <string>
 
-
 using namespace boost::spirit;
 using namespace boost::spirit::ascii;
 
 // Token definition
-enum tokenids 
+enum tokenIDs_e
 {
     IDANY = lex::min_token_id + 10
 };
 
+// Define lexer
 template <typename Lexer>
-struct word_count_tokens : lex::lexer<Lexer>
+struct MyLexer : lex::lexer<Lexer>
 {
-    word_count_tokens()
+    MyLexer()
     {
-        // define patterns (lexer macros) to be used during token definition 
-        // below
-        this->self.add_pattern
-            ("WORD", "[^ \t\n]+")
-        ;
+        // Define patterns to use for token definition
+        this->self.add_pattern("WORD", "[^ \t\n]+");
 
-        // define tokens and associate them with the lexer
-        word = "{WORD}";    // reference the pattern 'WORD' as defined above
+        // Define tokens and associate them with the lexer
+        word = "{WORD}";
 
-        // this lexer will recognize 3 token types: words, newlines, and 
-        // everything else
+        // Add tokens to the lexer
         this->self.add
             (word)          // no token id is needed here
             ('\n')          // characters are usable as tokens as well
@@ -52,18 +48,18 @@ struct word_count_tokens : lex::lexer<Lexer>
         ;
     }
 
-    // the token 'word' exposes the matched string as its parser attribute
+    // Define the tokens
     lex::token_def<std::string> word;
 };
 
-// Grammar definition
+// Define parser
 template <typename Iterator>
-struct word_count_grammar : qi::grammar<Iterator>
+struct MyParser : qi::grammar<Iterator>
 {
+    // Construct parser
     template <typename TokenDef>
-    word_count_grammar(TokenDef const& tok)
-      : word_count_grammar::base_type(start)
-      , c(0), w(0), l(0)
+    MyParser(TokenDef const& tok)
+        : MyParser::base_type(start), c(0), w(0), l(0)
     {
         using boost::phoenix::ref;
         using boost::phoenix::size;
@@ -71,53 +67,50 @@ struct word_count_grammar : qi::grammar<Iterator>
         start =  *(   tok.word          [++ref(w), ref(c) += size(_1)]
                   |   lit('\n')         [++ref(c), ++ref(l)] 
                   |   qi::token(IDANY)  [++ref(c)]
-                  )
-              ;
+                  );
     }
 
+    // Variables
     std::size_t c, w, l;
+
+    // Rules
     qi::rule<Iterator> start;
 };
 
 // Main program
 int main(int argc, char* argv[])
 {
-/*<  Define the token type to be used: `std::string` is available as the 
-     type of the token attribute 
->*/  typedef lex::lexertl::token<
-        char const*, boost::mpl::vector<std::string>
-    > token_type;
+    // Define the token type to be used
+    typedef lex::lexertl::token<char const*, boost::mpl::vector<std::string> > token_t;
 
-/*<  Define the lexer type to use implementing the state machine
->*/  typedef lex::lexertl::lexer<token_type> lexer_type;
+    // Define the lexer type to use implementing the state machine
+    typedef lex::lexertl::lexer<token_t> lexer_t;
 
-/*<  Define the iterator type exposed by the lexer type
->*/  typedef word_count_tokens<lexer_type>::iterator_type iterator_type;
+    // Define the iterator type exposed by the lexer type
+    typedef MyLexer<lexer_t>::iterator_type iterator_t;
 
-    // now we use the types defined above to create the lexer and grammar
-    // object instances needed to invoke the parsing process
-    word_count_tokens<lexer_type> word_count;          // Our lexer
-    word_count_grammar<iterator_type> g (word_count);  // Our parser 
+    // Create lexer and parser
+    MyLexer<lexer_t> myLexer;
+    MyParser<iterator_t> myParser(myLexer);
 
     // Test string
     std::string str("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla maximus eget turpis sed fringilla. Quisque dapibus posuere sollicitudin. Fusce vehicula felis ac malesuada consectetur. Suspendisse potenti. Mauris eu tincidunt magna. Donec congue facilisis leo nec molestie. Mauris sed augue accumsan risus posuere dignissim. Nunc a velit vulputate, imperdiet erat malesuada, laoreet ex. Nulla sed tortor mauris. Ut et varius lectus. Sed velit nulla, eleifend in mauris ac, tempus consequat orci.");
     char const* first = str.c_str();
     char const* last = &first[str.size()];
 
-/*<  Parsing is done based on the token stream, not the character 
-     stream read from the input. The function `tokenize_and_parse()` wraps
-     the passed iterator range `[first, last)` by the lexical analyzer and 
-     uses its exposed iterators to parse the token stream.
->*/  bool r = lex::tokenize_and_parse(first, last, word_count, g);
+    // Lex and parse
+    bool r = lex::tokenize_and_parse(first, last, myLexer, myParser);
 
+    // Result
     if (r) {
-        std::cout << "lines: " << g.l << ", words: " << g.w 
-                  << ", characters: " << g.c << "\n";
+        std::cout << "lines: " << myParser.l << ", words: " << myParser.w 
+                  << ", characters: " << myParser.c << "\n";
     }
     else {
         std::string rest(first, last);
         std::cerr << "Parsing failed\n" << "stopped at: \"" 
                   << rest << "\"\n";
     }
+
     return 0;
 }
