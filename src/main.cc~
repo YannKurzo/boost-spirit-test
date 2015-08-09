@@ -19,13 +19,17 @@
 #include <iostream>
 #include <string>
 
+using namespace std;
 using namespace boost::spirit;
 using namespace boost::spirit::ascii;
 
 // Token definition
 enum tokenIDs_e
 {
-    IDANY = lex::min_token_id + 10
+    ID_NUMBER = 1000,
+    ID_OPERATOR_PLUS_MINUS
+    //ID_WORD,
+    //ID_ANY
 };
 
 // Define lexer
@@ -34,22 +38,27 @@ struct MyLexer : lex::lexer<Lexer>
 {
     MyLexer()
     {
-        // Define patterns to use for token definition
-        this->self.add_pattern("WORD", "[^ \t\n]+");
+        // Define patterns
+        this->self.add_pattern
+            ("NUMBER", "-?[0-9]+(.[0-9]*)?")
+            ("PLUS_MINUS", "\\+")
+        ;
 
-        // Define tokens and associate them with the lexer
-        word = "{WORD}";
+        // Define the tokens
+        number = "{NUMBER}";
+        operatorPlusMinus = "{PLUS_MINUS}";
 
         // Add tokens to the lexer
         this->self.add
-            (word)          // no token id is needed here
-            ('\n')          // characters are usable as tokens as well
-            (".", IDANY)    // string literals will not be escaped by the library
+            (number, ID_NUMBER)
+            (operatorPlusMinus, ID_OPERATOR_PLUS_MINUS)
+            //(".", ID_ANY)
         ;
     }
 
-    // Define the tokens
-    lex::token_def<std::string> word;
+    // Declare the tokens
+    lex::token_def<double> number;
+    lex::token_def<std::string> operatorPlusMinus;
 };
 
 // Define parser
@@ -59,22 +68,25 @@ struct MyParser : qi::grammar<Iterator>
     // Construct parser
     template <typename TokenDef>
     MyParser(TokenDef const& tok)
-        : MyParser::base_type(start), c(0), w(0), l(0)
+        : MyParser::base_type(expression), var(0.0)
     {
         using boost::phoenix::ref;
         using boost::phoenix::size;
 
-        start =  *(   tok.word          [++ref(w), ref(c) += size(_1)]
-                  |   lit('\n')         [++ref(c), ++ref(l)] 
-                  |   qi::token(IDANY)  [++ref(c)]
-                  );
-    }
+        expression = tok.number >>
+                     tok.operatorPlusMinus >>
+                     tok.number;
+                /*qi::token(ID_NUMBER) >> 
+                *qi::token(ID_OPERATOR_PLUS_MINUS) >>
+                  qi::token(ID_NUMBER));*/
+    
 
     // Variables
-    std::size_t c, w, l;
+    //std::size_t c, w, l;
+    double var;
 
     // Rules
-    qi::rule<Iterator> start;
+    qi::rule<Iterator> expression;
 };
 
 // Main program
@@ -94,7 +106,7 @@ int main(int argc, char* argv[])
     MyParser<iterator_t> myParser(myLexer);
 
     // Test string
-    std::string str("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla maximus eget turpis sed fringilla. Quisque dapibus posuere sollicitudin. Fusce vehicula felis ac malesuada consectetur. Suspendisse potenti. Mauris eu tincidunt magna. Donec congue facilisis leo nec molestie. Mauris sed augue accumsan risus posuere dignissim. Nunc a velit vulputate, imperdiet erat malesuada, laoreet ex. Nulla sed tortor mauris. Ut et varius lectus. Sed velit nulla, eleifend in mauris ac, tempus consequat orci.");
+    std::string str(argv[1]);
     char const* first = str.c_str();
     char const* last = &first[str.size()];
 
@@ -103,8 +115,7 @@ int main(int argc, char* argv[])
 
     // Result
     if (r) {
-        std::cout << "lines: " << myParser.l << ", words: " << myParser.w 
-                  << ", characters: " << myParser.c << "\n";
+        std::cout << "Number: " << myParser.var << endl;
     }
     else {
         std::string rest(first, last);
